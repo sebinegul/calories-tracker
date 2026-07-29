@@ -27,8 +27,8 @@ export async function GET(req: NextRequest) {
     orderBy: { activityDate: "desc" },
   });
 
-  const totals = activities.reduce<{ steps: number; calories: number; durationMin: number }>(
-    (acc, a) => ({
+  const totals = activities.reduce(
+    (acc: { steps: number; calories: number; durationMin: number }, a: { steps: number | null; calories: number | null; durationMin: number | null }) => ({
       steps: acc.steps + (a.steps || 0),
       calories: acc.calories + (a.calories || 0),
       durationMin: acc.durationMin + (a.durationMin || 0),
