@@ -45,43 +45,51 @@ export async function POST(req: NextRequest) {
   const user = await getAuthUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await req.json();
-  const { foodItemId, customFoodName, portionSize, servingUnit, mealType, imageUrl, notes, loggedAt } = body;
+  try {
+    const body = await req.json();
+    const { foodItemId, customFoodName, portionSize, servingUnit, mealType, imageUrl, notes, loggedAt } = body;
 
-  let calories = 0, protein = 0, carbs = 0, fat = 0;
-  let foodItem = null;
+    let calories = 0, protein = 0, carbs = 0, fat = 0;
+    let foodItem = null;
 
-  if (foodItemId) {
-    foodItem = await prisma.foodItem.findUnique({ where: { id: foodItemId } });
-    if (foodItem) {
-      const multiplier = portionSize || 1;
-      calories = Math.round((foodItem.caloriesPer100 / 100) * foodItem.defaultServing * multiplier);
-      protein = Math.round(((foodItem.proteinPer100 / 100) * foodItem.defaultServing * multiplier) * 10) / 10;
-      carbs = Math.round(((foodItem.carbsPer100 / 100) * foodItem.defaultServing * multiplier) * 10) / 10;
-      fat = Math.round(((foodItem.fatPer100 / 100) * foodItem.defaultServing * multiplier) * 10) / 10;
+    if (foodItemId) {
+      foodItem = await prisma.foodItem.findUnique({ where: { id: foodItemId } });
+      if (foodItem) {
+        const multiplier = portionSize || 1;
+        calories = Math.round((foodItem.caloriesPer100 / 100) * foodItem.defaultServing * multiplier);
+        protein = Math.round(((foodItem.proteinPer100 / 100) * foodItem.defaultServing * multiplier) * 10) / 10;
+        carbs = Math.round(((foodItem.carbsPer100 / 100) * foodItem.defaultServing * multiplier) * 10) / 10;
+        fat = Math.round(((foodItem.fatPer100 / 100) * foodItem.defaultServing * multiplier) * 10) / 10;
+      }
     }
+
+    const meal = await prisma.mealLog.create({
+      data: {
+        userId: user.id,
+        foodItemId: foodItem?.id || null,
+        customFoodName: customFoodName || foodItem?.name || "Unknown Food",
+        portionSize: portionSize || 1,
+        servingUnit: servingUnit || "serving",
+        calories,
+        protein,
+        carbs,
+        fat,
+        mealType: mealType || "snack",
+        imageUrl,
+        notes,
+        loggedAt: loggedAt ? new Date(loggedAt) : new Date(),
+      },
+      include: { foodItem: true },
+    });
+
+    return NextResponse.json({ meal });
+  } catch (error) {
+    console.error("Meal log error:", error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Failed to log meal" },
+      { status: 500 }
+    );
   }
-
-  const meal = await prisma.mealLog.create({
-    data: {
-      userId: user.id,
-      foodItemId: foodItem?.id || null,
-      customFoodName: customFoodName || foodItem?.name || "Unknown Food",
-      portionSize: portionSize || 1,
-      servingUnit: servingUnit || "serving",
-      calories,
-      protein,
-      carbs,
-      fat,
-      mealType: mealType || "snack",
-      imageUrl,
-      notes,
-      loggedAt: loggedAt ? new Date(loggedAt) : new Date(),
-    },
-    include: { foodItem: true },
-  });
-
-  return NextResponse.json({ meal });
 }
 
 export async function DELETE(req: NextRequest) {
