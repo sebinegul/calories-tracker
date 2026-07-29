@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String   @id @default(cuid())
+  name            String?
+  email           String   @unique
+  password        String
+  age             Int?
+  heightCm        Float?
+  weightKg        Float?
+  gender          String?
+  activityLevel   String?  @default("moderate")
+  dailyCalorieGoal Int?    @default(2200)
+  photoUrl        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  mealLogs      MealLog[]
+  activities    ActivityLog[]
+  weightLogs    WeightLog[]
+  userGoals     UserGoal[]
+  googleFitToken GoogleFitToken[]
+}
+
+model FoodItem {
+  id             String   @id @default(cuid())
+  name           String
+  nameLocal      String?
+  category       String?
+  caloriesPer100 Float
+  proteinPer100  Float    @default(0)
+  carbsPer100    Float    @default(0)
+  fatPer100      Float    @default(0)
+  fiberPer100    Float    @default(0)
+  defaultServing Float    @default(100)
+  servingUnit    String   @default("g")
+  imageUrl       String?
+  isSouthIndian  Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  mealLogs MealLog[]
+}
+
+model MealLog {
+  id            String   @id @default(cuid())
+  userId        String
+  foodItemId    String?
+  customFoodName String?
+  portionSize   Float    @default(1)
+  servingUnit   String   @default("serving")
+  calories      Float
+  protein       Float    @default(0)
+  carbs         Float    @default(0)
+  fat           Float    @default(0)
+  mealType      String   @default("snack")
+  imageUrl      String?
+  notes         String?
+  loggedAt      DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  foodItem FoodItem? @relation(fields: [foodItemId], references: [id])
+
+  @@index([userId, loggedAt])
+}
+
+model ActivityLog {
+  id           String   @id @default(cuid())
+  userId       String
+  type         String
+  durationMin  Int?
+  calories     Float?
+  steps        Int?
+  distanceKm   Float?
+  source       String   @default("manual")
+  activityDate DateTime @default(now())
+  notes        String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, activityDate])
+}
+
+model WeightLog {
+  id        String   @id @default(cuid())
+  userId    String
+  weightKg  Float
+  date      DateTime @default(now())
+  notes     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+}
+
+model UserGoal {
+  id              String   @id @default(cuid())
+  userId          String
+  targetCalories  Int      @default(2200)
+  targetProtein   Float    @default(55)
+  targetCarbs     Float    @default(300)
+  targetFat       Float    @default(50)
+  targetSteps     Int      @default(10000)
+  startDate       DateTime @default(now())
+  endDate         DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GoogleFitToken {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  accessToken    String
+  refreshToken   String?
+  scope          String?
+  expiresAt      DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
