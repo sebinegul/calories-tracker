@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   });
 
   const totals = activities.reduce(
-    (acc, a) => ({
+    (acc: { steps: number; calories: number; durationMin: number }, a) => ({
       steps: acc.steps + (a.steps || 0),
       calories: acc.calories + (a.calories || 0),
       durationMin: acc.durationMin + (a.durationMin || 0),
