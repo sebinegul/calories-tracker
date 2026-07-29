@@ -71,8 +71,8 @@ export default function WeightPage() {
     .sort((a, b) => a.date.localeCompare(b.date))
     .map((l) => ({ date: l.date.split("T")[0], weight: l.weightKg }));
 
-  const latest = logs.length > 0 ? logs.reduce((a, b) => new Date(a.date) > new Date(b.date) ? a : b) : null;
-  const first = logs.length > 1 ? logs.reduce((a, b) => new Date(a.date) < new Date(b.date) ? a : b) : null;
+  const latest = logs.length > 0 ? logs.reduce((a: WeightLog, b: WeightLog) => new Date(a.date) > new Date(b.date) ? a : b) : null;
+  const first = logs.length > 1 ? logs.reduce((a: WeightLog, b: WeightLog) => new Date(a.date) < new Date(b.date) ? a : b) : null;
   const change = latest && first ? (latest.weightKg - first.weightKg) : 0;
 
   return (

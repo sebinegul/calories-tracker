@@ -77,8 +77,8 @@ export default function ReportsPage() {
   };
 
   const goal = data.user.dailyCalorieGoal || 2200;
-  const avgCalories = chartData.reduce((s, d) => s + d.calories, 0) / Math.max(chartData.length, 1);
-  const avgSteps = Math.round(chartData.reduce((s, d) => s + d.steps, 0) / Math.max(chartData.length, 1));
+  const avgCalories = chartData.reduce((s: number, d: { calories: number }) => s + d.calories, 0) / Math.max(chartData.length, 1);
+  const avgSteps = Math.round(chartData.reduce((s: number, d: { steps: number }) => s + d.steps, 0) / Math.max(chartData.length, 1));
 
   return (
     <div className="space-y-4 pb-8">

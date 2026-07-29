@@ -226,10 +226,10 @@ export default function LogPage() {
 
                 <button
                   onClick={() => {
-                    const totalCals = detectedFoods.reduce((s, f) => s + f.calories, 0);
-                    const totalP = detectedFoods.reduce((s, f) => s + f.protein, 0);
-                    const totalC = detectedFoods.reduce((s, f) => s + f.carbs, 0);
-                    const totalF = detectedFoods.reduce((s, f) => s + f.fat, 0);
+                    const totalCals = detectedFoods.reduce((s: number, f: DetectedFood) => s + f.calories, 0);
+                    const totalP = detectedFoods.reduce((s: number, f: DetectedFood) => s + f.protein, 0);
+                    const totalC = detectedFoods.reduce((s: number, f: DetectedFood) => s + f.carbs, 0);
+                    const totalF = detectedFoods.reduce((s: number, f: DetectedFood) => s + f.fat, 0);
                     logFood(
                       detectedFoods.map((f) => f.name).join(" + "),
                       totalCals,
@@ -241,7 +241,7 @@ export default function LogPage() {
                   disabled={logging}
                   className="w-full h-10 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 disabled:opacity-50 transition-colors shadow-sm"
                 >
-                  {logging ? "Logging..." : `Log Meal (${Math.round(detectedFoods.reduce((s, f) => s + f.calories, 0))} kcal)`}
+                  {logging ? "Logging..." : `Log Meal (${Math.round(detectedFoods.reduce((s: number, f: DetectedFood) => s + f.calories, 0))} kcal)`}
                 </button>
               </div>
             </div>
