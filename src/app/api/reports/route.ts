@@ -119,7 +119,7 @@ export async function GET(req: NextRequest) {
     days,
     weeks,
     months,
-    weightLogs: weightLogs.map(w => ({ date: w.date.toISOString().split("T")[0], weight: w.weightKg })),
+    weightLogs: weightLogs.map((w: { date: Date; weightKg: number }) => ({ date: w.date.toISOString().split("T")[0], weight: w.weightKg })),
     user: {
       weightKg: user.weightKg,
       heightCm: user.heightCm,
