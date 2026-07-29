@@ -106,7 +106,7 @@ export function NavBar() {
       {/* Mobile bottom nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-lg border-t border-zinc-200 dark:border-zinc-800 sm:hidden">
         <div className="flex items-center justify-around h-14 px-2">
-          {navItems.filter((_, i) => i < 5).map((item) => (
+          {navItems.filter((_, i) => i < 6).map((item) => (
             <Link
               key={item.href}
               href={item.href}
