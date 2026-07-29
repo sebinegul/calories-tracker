@@ -32,6 +32,7 @@ yarn-error.log*
 # env files (sensitive keys)
 .env
 .env.local
+.env.vercel
 .env.development.local
 .env.test.local
 .env.production.local
